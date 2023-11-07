@@ -91,7 +91,7 @@ public class DrawableRenderer {
         Shader shader = fluija.getResources().getCircleShader();
         shader.use();
         shader.setUniform3f("color", color);
-        shader.setUniform1f("radius", radius);
+        shader.setUniform1f("smoothing", 0.5f - (0.5f / radius));
 
         rect(x - radius, y - radius, x + radius, y + radius, shader);
     }
