@@ -1,0 +1,45 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+group = 'io.github.panda885'
+version = '0.0.0'
+
+ext {
+    lwjglVersion = "3.3.3"
+    lwjglNatives = "natives-windows"
+}
+
+switch (org.gradle.internal.os.OperatingSystem.current()) {
+    case org.gradle.internal.os.OperatingSystem.LINUX:
+        lwjglNatives = "natives-linux"
+        break
+}
+
+application {
+    mainClass = 'io.github.panda885.fluija.Main'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://raw.githubusercontent.com/kotlin-graphics/mary/master' }
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation 'org.lwjgl:lwjgl'
+    implementation 'org.lwjgl:lwjgl-glfw'
+    implementation 'org.lwjgl:lwjgl-opengl'
+    implementation 'org.lwjgl:lwjgl-stb'
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+
+    implementation 'io.github.spair:imgui-java-app:1.86.11'
+
+    compileOnly 'org.jetbrains:annotations:24.0.1'
+}
