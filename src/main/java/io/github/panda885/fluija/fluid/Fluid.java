@@ -31,7 +31,7 @@ public class Fluid {
 
     public float targetDensity = 0.001f;
     public float mass = 15f;
-    public float pressureMultiplier = 10f;
+    public float pressureMultiplier = 500f;
 
     public Fluid(int width, int height, List<Vector2f> particles, float smoothingRadius) {
         this.width = width;
