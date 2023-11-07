@@ -23,8 +23,6 @@ application {
 
 repositories {
     mavenCentral()
-    maven { url 'https://raw.githubusercontent.com/kotlin-graphics/mary/master' }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
