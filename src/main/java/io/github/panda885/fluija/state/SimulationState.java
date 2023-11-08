@@ -1,7 +1,6 @@
 package io.github.panda885.fluija.state;
 
 import io.github.panda885.fluija.Fluija;
-import io.github.panda885.fluija.gui.FluidGui;
 import io.github.panda885.fluija.fluid.Fluid;
 import io.github.panda885.fluija.math.Vector2f;
 import io.github.panda885.fluija.math.Vector2i;
@@ -23,11 +22,6 @@ public class SimulationState implements State {
 
     public SimulationState(Fluid fluid) {
         this.fluid = fluid;
-    }
-
-    @Override
-    public void init(Fluija fluija) {
-        fluija.getRenderer().getGuiRenderer().add(new FluidGui(fluija));
     }
 
     @Override

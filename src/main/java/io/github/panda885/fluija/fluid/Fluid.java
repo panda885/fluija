@@ -1,8 +1,7 @@
 package io.github.panda885.fluija.fluid;
 
-import io.github.panda885.fluija.math.Texture;
+import io.github.panda885.fluija.fluid.settings.FluidSimulationSettings;
 import io.github.panda885.fluija.math.Vector2f;
-import io.github.panda885.fluija.math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +28,22 @@ public class Fluid {
     private final List<Float> densities;
     private final List<Vector2f> velocities;
 
-    public float targetDensity = 0.001f;
-    public float mass = 15f;
-    public float pressureMultiplier = 500f;
+    private final FluidSimulationSettings settings;
 
-    public Fluid(int width, int height, List<Vector2f> particles, float smoothingRadius) {
+    public Fluid(int width, int height, float smoothingRadius, List<Vector2f> particles, FluidSimulationSettings settings) {
         this.width = width;
         this.height = height;
         this.halfWidth = width / 2f;
         this.halfHeight = height / 2f;
-        this.particles = particles;
         this.smoothingRadius = smoothingRadius;
         this.smoothingVolume = (float) ((Math.PI * Math.pow(smoothingRadius, 4)) / 6);
         this.smoothingScale = (float) (12 / (Math.PI * Math.pow(smoothingRadius, 4)));
         this.lookup = new FluidParticleLookup(smoothingRadius, width, height);
+        this.particles = particles;
         this.predictions = new ArrayList<>(particles);
         this.densities = new ArrayList<>(particles.size());
         this.velocities = new ArrayList<>(particles.size());
+        this.settings = settings;
 
         for (int i = 0; i < particles.size(); i++) {
             this.densities.add(0f);
@@ -73,7 +71,7 @@ public class Fluid {
             Vector2f particle = predictions.get(i);
             float distance = particle.distance(position);
             float influence = smoothingFunction(distance);
-            density += influence * mass;
+            density += influence * settings.getMass();
         }
         return density;
     }
@@ -106,14 +104,14 @@ public class Fluid {
             Vector2f direction = distance == 0f ? Vector2f.random(random) : particle.minus(position).divide(distance);
             float slope = smoothingFunctionSlope(distance);
             float sharedPressure = calculateSharedPressure(density, densities.get(particleIndex));
-            pressure = pressure.add(direction.multiply(sharedPressure).multiply(slope).multiply(mass).divide(density));
+            pressure = pressure.add(direction.multiply(sharedPressure).multiply(slope).multiply(settings.getMass()).divide(density));
 
         }
         return pressure;
     }
 
     public float convertDensityToPressure(float density) {
-        return (density - targetDensity) * pressureMultiplier;
+        return (density - settings.getTargetDensity()) * settings.getPressureMultiplier();
     }
 
     public void simulate(float deltaTime) {
@@ -161,14 +159,6 @@ public class Fluid {
         });
     }
 
-    public float getHalfWidth() {
-        return halfWidth;
-    }
-
-    public float getHalfHeight() {
-        return halfHeight;
-    }
-
     public int getWidth() {
         return width;
     }
@@ -177,11 +167,19 @@ public class Fluid {
         return height;
     }
 
+    public float getSmoothingRadius() {
+        return smoothingRadius;
+    }
+
     public List<Vector2f> getParticles() {
         return particles;
     }
 
     public List<Vector2f> getVelocities() {
         return velocities;
+    }
+
+    public FluidSimulationSettings getSettings() {
+        return settings;
     }
 }

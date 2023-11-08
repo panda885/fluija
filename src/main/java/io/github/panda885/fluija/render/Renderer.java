@@ -1,10 +1,9 @@
 package io.github.panda885.fluija.render;
 
 import io.github.panda885.fluija.Fluija;
-import io.github.panda885.fluija.gui.FluidCreatorGui;
 import io.github.panda885.fluija.math.Matrix4f;
 import io.github.panda885.fluija.render.gui.GuiRenderer;
-import io.github.panda885.fluija.render.fluid.FluidCreatorRenderer;
+import io.github.panda885.fluija.render.fluid.FluidCreationRenderer;
 import io.github.panda885.fluija.render.fluid.FluidRenderer;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL15;
@@ -15,7 +14,7 @@ public class Renderer {
     private final GuiRenderer guiRenderer;
 
     private final FluidRenderer fluidRenderer;
-    private final FluidCreatorRenderer fluidCreatorRenderer;
+    private final FluidCreationRenderer fluidCreationRenderer;
 
     private Matrix4f projectionMatrix;
     private int vertexBufferObject;
@@ -25,7 +24,7 @@ public class Renderer {
         this.drawableRenderer = new DrawableRenderer(fluija);
         this.guiRenderer = new GuiRenderer(fluija);
         this.fluidRenderer = new FluidRenderer(fluija);
-        this.fluidCreatorRenderer = new FluidCreatorRenderer(fluija);
+        this.fluidCreationRenderer = new FluidCreationRenderer(fluija);
     }
 
     public void init() {
@@ -38,7 +37,6 @@ public class Renderer {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferObject);
 
         this.guiRenderer.init();
-        this.guiRenderer.add(new FluidCreatorGui(this.fluija));
     }
 
     public void render() {
@@ -68,7 +66,7 @@ public class Renderer {
         return fluidRenderer;
     }
 
-    public FluidCreatorRenderer getFluidCreatorRenderer() {
-        return fluidCreatorRenderer;
+    public FluidCreationRenderer getFluidCreatorRenderer() {
+        return fluidCreationRenderer;
     }
 }

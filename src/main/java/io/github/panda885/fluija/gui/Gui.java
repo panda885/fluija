@@ -4,24 +4,28 @@ import imgui.ImGui;
 import imgui.type.ImBoolean;
 import imgui.type.ImFloat;
 import imgui.type.ImInt;
+import io.github.panda885.fluija.math.Vector2f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface Gui {
 
-    default @NotNull Optional<Float> getDefaultHeight() {
-        return Optional.empty();
-    }
-
-    default @NotNull Optional<Float> getDefaultWidth() {
-        return Optional.empty();
-    }
-
     @NotNull String getName();
+
+    default @Nullable Vector2f getDefaultPosition() {
+        return null;
+    }
+
+    default float getDefaultHeight() {
+        return 0f;
+    }
+
+    default float getDefaultWidth() {
+        return 0f;
+    }
 
     void update();
 

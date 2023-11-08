@@ -1,5 +1,6 @@
 package io.github.panda885.fluija;
 
+import io.github.panda885.fluija.fluid.settings.FluidSimulationSettings;
 import io.github.panda885.fluija.render.Renderer;
 import io.github.panda885.fluija.render.Window;
 import io.github.panda885.fluija.resource.ResourceLoadingException;
@@ -21,7 +22,7 @@ public class Fluija {
     private Renderer renderer;
 
     private @NotNull State state = new CreationState();
-    private @Nullable State newState = null;
+    private @Nullable State newState = state;
 
     public void run() {
         // Set up an error callback. The default implementation
@@ -80,6 +81,13 @@ public class Fluija {
     public @NotNull Optional<SimulationState> getSimulationState() {
         if (state instanceof SimulationState simulationState) return Optional.of(simulationState);
         return Optional.empty();
+    }
+
+    public @NotNull Optional<FluidSimulationSettings> getSimulationSettings() {
+        return getCreationState()
+                .map(CreationState::getSimulationSettings)
+                .or(() -> getSimulationState()
+                        .map(state -> state.getFluid().getSettings()));
     }
 
     public Resources getResources() {
