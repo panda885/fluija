@@ -38,7 +38,7 @@ public class Fluid {
         this.smoothingRadius = smoothingRadius;
         this.smoothingVolume = (float) ((Math.PI * Math.pow(smoothingRadius, 4)) / 6);
         this.smoothingScale = (float) (12 / (Math.PI * Math.pow(smoothingRadius, 4)));
-        this.lookup = new FluidParticleLookup(smoothingRadius, width, height);
+        this.lookup = new FluidParticleLookup(smoothingRadius, particles.size(), width, height);
         this.particles = particles;
         this.predictions = new ArrayList<>(particles);
         this.densities = new ArrayList<>(particles.size());
