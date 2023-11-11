@@ -22,6 +22,7 @@ public class Fluid {
     private final float smoothingRadius;
     private final float smoothingVolume;
     private final float smoothingScale;
+    private final float viscositySmoothingVolume;
 
     private final List<Vector2f> particles;
     private final List<Vector2f> predictions;
@@ -38,6 +39,7 @@ public class Fluid {
         this.smoothingRadius = smoothingRadius;
         this.smoothingVolume = (float) ((Math.PI * Math.pow(smoothingRadius, 4)) / 6);
         this.smoothingScale = (float) (12 / (Math.PI * Math.pow(smoothingRadius, 4)));
+        this.viscositySmoothingVolume = (float) ((Math.PI * Math.pow(smoothingRadius, 8)) / 4);
         this.lookup = new FluidParticleLookup(smoothingRadius, particles.size(), width, height);
         this.particles = particles;
         this.predictions = new ArrayList<>(particles);
@@ -63,6 +65,12 @@ public class Fluid {
     public float smoothingFunctionSlope(float distance) {
         if (distance >= smoothingRadius) return 0;
         return (distance - smoothingRadius) * smoothingScale;
+    }
+
+    public float viscositySmoothingFunction(float distance) {
+        if (distance >= smoothingRadius) return 0;
+        float value = smoothingRadius * smoothingRadius - distance * distance;
+        return value * value * value / viscositySmoothingVolume;
     }
 
     public float calculateDensity(Vector2f position) {
@@ -105,13 +113,29 @@ public class Fluid {
             float slope = smoothingFunctionSlope(distance);
             float sharedPressure = calculateSharedPressure(density, densities.get(particleIndex));
             pressure = pressure.add(direction.multiply(sharedPressure).multiply(slope).multiply(settings.getMass()).divide(density));
-
         }
+
         return pressure;
     }
 
     public float convertDensityToPressure(float density) {
         return (density - settings.getTargetDensity()) * settings.getPressureMultiplier();
+    }
+
+    public Vector2f calculateViscosityForce(int particleIndex) {
+        Vector2f viscosityForce = new Vector2f();
+        Vector2f position = this.particles.get(particleIndex);
+        Vector2f velocity = this.velocities.get(particleIndex);
+
+        for (int i : lookup.getNearby(position).toList()) {
+            Vector2f particle = predictions.get(i);
+            float distance = particle.distance(position);
+            float influence = viscositySmoothingFunction(distance);
+
+            viscosityForce = viscosityForce.add(this.velocities.get(i).minus(velocity).multiply(influence));
+        }
+
+        return viscosityForce.multiply(settings.getViscosityStrength());
     }
 
     public void simulate(float deltaTime) {
@@ -128,9 +152,9 @@ public class Fluid {
             float density = densities.get(i);
 
             if (density != 0f) {
-                Vector2f pressureForce = calculatePressureForce(i);
-                Vector2f pressureAcceleration = pressureForce.divide(density);
-                velocity = velocity.add(pressureAcceleration);
+                Vector2f force = calculatePressureForce(i).add(calculateViscosityForce(i));
+                Vector2f acceleration = force.divide(density);
+                velocity = velocity.add(acceleration);
             }
 
             Vector2f particle = particles.get(i);

@@ -63,6 +63,7 @@ public class FluidSimulationSettingsGui implements Gui {
         Gui.bindSliderFloat("mass", 0f, 200f, settings::getMass, settings::setMass);
         Gui.bindSliderFloat("pressure multiplier", 0f, 10000f, settings::getPressureMultiplier, settings::setPressureMultiplier);
         Gui.bindSliderFloat("target density", 0f, 0.5f, settings::getTargetDensity, settings::setTargetDensity);
+        Gui.bindSliderFloat("viscosity strength", 0f, 10f, settings::getViscosityStrength, settings::setViscosityStrength);
         Gui.bindInputFloat("gravity", settings::getGravity, settings::setGravity);
 
         if (creationState.isEmpty()) ImGui.beginDisabled();

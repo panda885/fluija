@@ -5,6 +5,7 @@ public class FluidSimulationSettings {
     private float pressureMultiplier = 8000f;
     private float targetDensity = 0.285f;
     private float gravity = 400f;
+    private float viscosityStrength = 1f;
 
 
     public float getMass() {
@@ -37,5 +38,13 @@ public class FluidSimulationSettings {
 
     public void setGravity(float gravity) {
         this.gravity = gravity;
+    }
+
+    public float getViscosityStrength() {
+        return viscosityStrength;
+    }
+
+    public void setViscosityStrength(float viscosityStrength) {
+        this.viscosityStrength = viscosityStrength;
     }
 }
