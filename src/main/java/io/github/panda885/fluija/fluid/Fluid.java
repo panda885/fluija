@@ -116,7 +116,8 @@ public class Fluid {
 
     public void simulate(float deltaTime) {
         IntStream.range(0, particles.size()).parallel().forEach(i -> {
-            this.predictions.set(i, this.particles.get(i).add(this.velocities.get(i).multiply(deltaTime)));
+            this.velocities.set(i, velocities.get(i).add(new Vector2f(0f, -settings.getGravity()).multiply(deltaTime)));
+            this.predictions.set(i, this.particles.get(i).add(this.velocities.get(i).multiply(deltaTime))); // TODO: Use constant value instead of delta time (delta time is not correct)
         });
 
         this.lookup.recalculate(this.predictions);
@@ -132,20 +133,21 @@ public class Fluid {
                 velocity = velocity.add(pressureAcceleration);
             }
 
-//            REPEL:
             Vector2f particle = particles.get(i);
-            if (Math.abs(particle.x) >= halfWidth) {
-                velocity = new Vector2f(-Math.signum(particle.x) * 10f, velocity.y);
-            } else if (Math.abs(particle.y) >= halfHeight) {
-                velocity = new Vector2f(velocity.x, -Math.signum(particle.y) * 10f);
-            }
+
+//            REPEL:
+//            if (Math.abs(particle.x) >= halfWidth) {
+//                velocity = new Vector2f(-Math.signum(particle.x) * 10f, velocity.y);
+//            } else if (Math.abs(particle.y) >= halfHeight) {
+//                velocity = new Vector2f(velocity.x, -Math.signum(particle.y) * 10f);
+//            }
 
 //            BOUNCE:
-//            if (Math.abs(particle.x) >= halfWidth) {
-//                velocity = new Vector2f(-velocity.x, velocity.y);
-//            } else if (Math.abs(particle.y) >= halfHeight) {
-//                velocity = new Vector2f(velocity.x, -velocity.y);
-//            }
+            if (Math.abs(particle.x) >= halfWidth) {
+                velocity = new Vector2f(-velocity.x * 0.15f, velocity.y);
+            } else if (Math.abs(particle.y) >= halfHeight) {
+                velocity = new Vector2f(velocity.x, -velocity.y * 0.15f);
+            }
 
 //            STOP:
 //            if (Math.abs(particle.x) >= halfWidth) {

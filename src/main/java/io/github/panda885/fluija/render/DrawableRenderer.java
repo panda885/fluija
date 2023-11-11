@@ -83,16 +83,24 @@ public class DrawableRenderer {
         rectTextured(first.x, first.y, second.x, second.y, texture);
     }
 
+    public void circle(float x, float y, float radius, float smoothing, Vector3f color) {
+        Shader shader = fluija.getResources().getCircleShader();
+        shader.use();
+        shader.setUniform3f("color", color);
+        shader.setUniform1f("smoothing", 0.5f - smoothing / 2f);
+
+        rect(x - radius, y - radius, x + radius, y + radius, shader);
+    }
+
+    public void circle(Vector2f position, float radius, float smoothing, Vector3f color) {
+        circle(position.x, position.y, radius, smoothing, color);
+    }
+
     public void circle(Vector2f position, float radius, Vector3f color) {
         circle(position.x, position.y, radius, color);
     }
 
     public void circle(float x, float y, float radius, Vector3f color) {
-        Shader shader = fluija.getResources().getCircleShader();
-        shader.use();
-        shader.setUniform3f("color", color);
-        shader.setUniform1f("smoothing", 0.5f - (0.5f / radius));
-
-        rect(x - radius, y - radius, x + radius, y + radius, shader);
+        circle(x, y, radius, 1f / radius, color);
     }
 }
